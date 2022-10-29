@@ -1,7 +1,11 @@
+import logging
+
 import dirutil
 from const import *
 from kotlinwebdocparser import KotlinWebDocParser
 from sqliteconnection import SQLiteConnection
+
+logging.basicConfig(level=logging.INFO)
 
 if __name__ == '__main__':
 
