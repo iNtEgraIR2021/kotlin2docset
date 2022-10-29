@@ -49,15 +49,13 @@ class KotlinWebDocParser:
         for file_index in range(len_files):
             html_file = html_files[file_index]
             
-            # if file_index == 0:
-            #     # parse css file names to get the right order to merge them into one file
-            #     logging.debug(f"parsing css file names from '{html_file}' ... ")
-            #     self.parse_css_js(html_file)
+            if file_index == 0:
+                # parse css file names to get the right order to merge them into one file
+                logging.debug(f"parsing css file names from '{html_file}' ... ")
+                self.parse_css_js(html_file)
             
             logging.debug(f" {file_index+1}/{len_files} parsing '{html_file}' ... ")
             self.parse_file(html_file)
-
-            # break
 
     def parse_css_js(self, file_path: str):
         """
