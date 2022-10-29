@@ -4,13 +4,14 @@
 ### Requirements
 - Python 3
 - BeautifulSoup
+- wget
 - Pretty decent internet connection
 
 ### Usage
 In order to start docset build process, run:
 
 ```bash
-python3 kotlin2docset.py
+python3 kotlindoc2set.py
 ```
 
 This will start querying main [KotlinLang pages](https://kotlinlang.org/api/latest/jvm/stdlib/). The process itself takes a lot of time, since all the URLs are queried one by one. 
