@@ -76,7 +76,7 @@ class KotlinWebDocParser:
 
         css_contents = ''
         for css_link in css_links:
-            file_name = unquote(str(css_link.get('href'))).strip('/').replace('../','').strip('.css') + '.css'
+            file_name = unquote(str(css_link.get('href'))).replace('../','').strip('/').strip('.css') + '.css'
             file_path = Path(self.local_path) / file_name
             
             if file_path.exists():
@@ -91,7 +91,7 @@ class KotlinWebDocParser:
                         logging.error(f"while processing contents of '{file_path}' -> error: content is invalid!")
                     else:
                         css_contents += css_temp
-                        # file_path.unlink()
+                        file_path.unlink()
                 except Exception as e:
                     logging.error(f"failed to read '{file_path}' -> error: {e}")
             else:
@@ -144,7 +144,7 @@ class KotlinWebDocParser:
 
         js_contents = ''
         for js_link in js_links:
-            file_name = unquote(str(js_link.get('src'))).strip('/').replace('../','')
+            file_name = unquote(str(js_link.get('src'))).replace('../','').strip('/')
             file_path = Path(self.local_path) / file_name
             
             if file_path.exists():
@@ -159,7 +159,7 @@ class KotlinWebDocParser:
                         logging.error(f"while processing contents of '{file_path}' -> error: content is invalid!")
                     else:
                         js_contents += js_temp
-                        # file_path.unlink()
+                        file_path.unlink()
                 except Exception as e:
                     logging.error(f"failed to read '{file_path}' -> error: {e}")
             else:
@@ -193,17 +193,21 @@ class KotlinWebDocParser:
 
             soup = BeautifulSoup(html_str, features='html.parser')
 
+            # create relative path for local use -> '../../'
+            relative_path = ''.join(["../" for i in range(len(Path(str(file_path).replace(str(Path(self.local_path)), '')).parts)-2)])
+
             css_links = list(soup.select('link[rel^="stylesheet"]'))
             css_href = str(css_links[0].get('href'))
-            css_links[0]['href'] = '/_assets/styles.css' # css_href.replace(css_href.split('/')[-1],'styles.css')
+            css_links[0]['href'] = relative_path + '_assets/styles.css'
             css_link = str(css_links[0])
 
+            # deativacted javascript for offline use
             # js_links = list(soup.select('script[src^="/_assets"]')) + list(soup.select('script[src^="../"]'))
             # js_href = str(js_links[0].get('src'))
             # js_links[0]['src'] = '/_assets/script.js' # js_href.replace(js_href.split('/')[-1],'script.js')
             # js_link = str(js_links[0])
 
-            for tag_group in [soup.select('script[src^="/_assets"]'), soup.select('script[src^="../"]'), soup.select('link[rel^="stylesheet"]'), soup.select('link[rel^="dns"]'), soup.select('link[rel~="icon"]'), soup.select('link[rel$="icon"]'), soup.select('meta[property^="og"]'), soup.select('meta[property^="twitter"]'), soup.select('head > script'), soup.select('iframe'), soup.select('.global-layout > header'), soup.select('.global-layout > footer'), soup.select('a[href="/docs/home.html"]')]:
+            for tag_group in [soup.select('script[src^="/_assets"]'), soup.select('script[src^="../"]'), soup.select('link[rel^="stylesheet"]'), soup.select('link[rel^="dns"]'), soup.select('link[rel~="icon"]'), soup.select('link[rel$="icon"]'), soup.select('meta[property^="og"]'), soup.select('meta[property^="twitter"]'), soup.select('head > script'), soup.select('iframe'), soup.select('.global-layout > header'), soup.select('.global-layout > footer'), soup.select('a[href="/docs/home.html"]'), soup.select('a[href^="/api/latest/kotlin.test"]')]:
                 for tag in tag_group:
                     tag.decompose()
 
